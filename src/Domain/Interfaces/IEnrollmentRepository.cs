@@ -6,5 +6,6 @@ namespace Domain.Interfaces
     {
         Task<List<Enrollment>> GetAsync(CancellationToken cancellationToken);
         Task CreateAsync(Enrollment enrollmentEntity, CancellationToken cancellationToken);
+        Task DeleteFilteredAsync(Enrollment enrollmentEntity, CancellationToken cancellationToken);
     }
 }
