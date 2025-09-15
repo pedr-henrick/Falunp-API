@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories
         {
             if (await _dbContext.Classes.AnyAsync(c => c.Name == classEntity.Name && c.Id != id, cancellationToken))
             {
-                throw new Exception("O nome da classe já está em uso.");
+                throw new Exception("The class name is already in use.");
             }
 
             var classDb = await _dbContext.Classes.FindAsync(id, cancellationToken)
@@ -42,9 +42,25 @@ namespace Infrastructure.Repositories
             {
                 if (ex.InnerException?.Message.Contains("unique constraint") == true)
                 {
-                    throw new Exception("O nome da classe já está em uso.");
+                    throw new Exception("The class name is already in use.");
                 }
                 throw;
+            }
+        }
+
+        public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var classDb = await _dbContext.Classes.FindAsync(id, cancellationToken)
+                ?? throw new Exception("Class Not Found");
+
+            _dbContext.Classes.Remove(classDb);
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Error deleting class: " + ex.InnerException?.Message);
             }
         }
 

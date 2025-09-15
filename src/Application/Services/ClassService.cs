@@ -69,7 +69,20 @@ namespace Application.Services
                 var classEntity = ClassDto.Adapt<Class>();
                 await _classRepository.UpdateAsync(id, classEntity, cancellationToken);
 
-                return Result<string>.Success("Class Update successfully");
+                return Result<string>.Success("Class update completed successfully");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure($"Error updating class: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<string>> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _classRepository.DeleteAsync(id, cancellationToken);
+                return Result<string>.Success("Class successfully deleted");
             }
             catch (Exception ex)
             {

@@ -73,16 +73,46 @@ namespace WebApi.Controllers
             });
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateClassAsync([FromQuery] Guid id, [FromBody] ClassDto classDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateClassAsync(Guid id, [FromBody] ClassDto classDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
 
             var result = await _classService.UpdateAsync(id, classDto, cancellationToken);
+
+            if (result.IsSuccess)
+                return Ok(result.Value);
+
+            if (result.ValidationErrors.Count != 0)
+            {
+                foreach (var error in result.ValidationErrors)
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+
+                return ValidationProblem(ModelState);
+            }
+
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Update class failed",
+                Detail = result.Error,
+                Status = StatusCodes.Status401Unauthorized
+            });
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteClassAsync(Guid id, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+
+            var result = await _classService.DeleteAsync(id, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
