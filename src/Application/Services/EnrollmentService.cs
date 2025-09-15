@@ -1,6 +1,5 @@
 ﻿using Application.Common;
 using Application.DTOs.Enrollment;
-using Application.DTOs.Student;
 using Domain.Entities;
 using Domain.Interfaces;
 using Mapster;
@@ -16,9 +15,9 @@ namespace Application.Services
             var enrollments = await _enrollmentRepository.GetAsync(cancellationToken);
             var enrollmentDtos = enrollments.Select(e => new EnrollmentInfoDto
             {
-                StudentId = e.StudentId,
+                StudentId = e.StudentId.Value,
                 StudentName = e.Student?.Name,
-                ClassId = e.ClassId,
+                ClassId = e.ClassId.Value,
                 ClassName = e.Class?.Name,
                 RegistrationDate = e.RegistrationDate
             }).ToList();
@@ -32,12 +31,27 @@ namespace Application.Services
             {
                 var enrollmentEntity = enrollmentCreatetDto.Adapt<Enrollment>();
                 await _enrollmentRepository.CreateAsync(enrollmentEntity, cancellationToken);
-                
+
                 return Result<string>.Success("Enrollment added successfully");
             }
             catch (Exception ex)
             {
                 return Result<string>.Failure($"Error retrieving enrollment: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<string>> DeleteAsync(EnrollmentFilterDto enrollmentFilterDto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var enrolmentEntity = enrollmentFilterDto.Adapt<Enrollment>();
+                await _enrollmentRepository.DeleteFilteredAsync(enrolmentEntity, cancellationToken);
+
+                return Result<string>.Success("Enrollment successfully deleted");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure($"Error deleting enrollment: {ex.Message}");
             }
         }
     }
