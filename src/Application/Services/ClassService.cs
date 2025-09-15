@@ -12,13 +12,14 @@ namespace Application.Services
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IValidator<ClassDto> _classValidator = classValidator;
 
-        public async Task<Result<List<ClassInfoDto>>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<Result<List<ClassInfoDto>>> GetAsync(ClassFilterDto classFilterDto, CancellationToken cancellationToken)
         {
             try
             {
-                var classes = await _classRepository.GetAllAsync(cancellationToken);
-                var response = classes.Adapt<List<ClassInfoDto>>();
+                var classEntity = classFilterDto.Adapt<Class>();
+                var classes = await _classRepository.GetAsync(classEntity, cancellationToken);
 
+                var response = classes.Adapt<List<ClassInfoDto>>();
                 return Result<List<ClassInfoDto>>.Success(response);
             }
             catch (Exception ex)
