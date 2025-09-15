@@ -15,6 +15,7 @@ namespace Application.Support
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IClassService, ClassService>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IEnrollmentService, EnrollmentService>();
 
             // Validators
             services.AddScoped<IValidator<ClassDto>, ClassDtoValidator>();

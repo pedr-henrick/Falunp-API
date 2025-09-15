@@ -20,6 +20,7 @@ namespace Infrastructure.Support.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClassRepository, ClassRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 
             // Services
             services.AddScoped<ITokenService, TokenService>();
