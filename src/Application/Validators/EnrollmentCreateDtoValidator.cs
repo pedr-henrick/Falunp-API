@@ -16,18 +16,18 @@ namespace Application.Validators
             _studentRepository = studentRepository;
 
             RuleFor(x => x.StudentId)
-                .NotEmpty().WithMessage("ClassId é obrigatório.")
-                .MustAsync(async (id, cancellation) => (await _studentRepository.GetAsync(new Student() { Id = id }, cancellation)) == null)
-                .WithMessage("Aluno não encontrado.");
+                .NotEmpty().WithMessage("ClassId is required.")
+                .MustAsync(async (id, cancellation) => (await _studentRepository.GetByIdAsync(id, cancellation)) != null)
+                .WithMessage("Student not found.");
 
             RuleFor(x => x.ClassId)
-                .NotEmpty().WithMessage("ClassId é obrigatório.")
-                .MustAsync(async (id, cancellation) => (await _classRepository.GetAsync(new Class() { Id = id}, cancellation)) == null)
-                .WithMessage("Turma não encontrada.");
+                .NotEmpty().WithMessage("ClassId is required.")
+                .MustAsync(async (id, cancellation) => (await _classRepository.GetAsync(new Class() { Id = id }, cancellation)) != null)
+                .WithMessage("Class not found.");
 
             RuleFor(x => x.RegistrationDate)
-                .NotEmpty().WithMessage("RegistrationDate é obrigatório.")
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Data de matrícula não pode ser futura.");
+                .NotEmpty().WithMessage("RegistrationDate is required.")
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("RegistrationDate cannot be in the future.");
         }
-    } 
+    }
 }

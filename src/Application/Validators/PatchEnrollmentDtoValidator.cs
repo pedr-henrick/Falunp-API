@@ -17,12 +17,12 @@ namespace Application.Validators
 
             RuleFor(x => x.StudentId)
                 .NotEmpty().WithMessage("ClassId é obrigatório.")
-                .MustAsync(async (id, cancellation) => (await _studentRepository.GetAsync(new Student() { Id = id }, cancellation)) == null)
+                .MustAsync(async (id, cancellation) => (await _studentRepository.GetByIdAsync(id, cancellation)) != null)
                 .WithMessage("Aluno não encontrado.");
 
             RuleFor(x => x.ClassId)
                 .NotEmpty().WithMessage("ClassId é obrigatório.")
-                .MustAsync(async (id, cancellation) => (await _classRepository.GetAsync(new Class() { Id = id}, cancellation)) == null)
+                .MustAsync(async (id, cancellation) => (await _classRepository.GetAsync(new Class() { Id = id}, cancellation)) != null)
                 .WithMessage("Turma não encontrada.");
 
             RuleFor(x => x.RegistrationDate)
