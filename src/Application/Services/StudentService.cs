@@ -10,11 +10,13 @@ namespace Application.Services
     {
         private readonly IStudentRepository _studentRepository = studentRepository;
 
-        public async Task<Result<List<StudentInfoDto>>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<Result<List<StudentInfoDto>>> GetAsync(StudentRequestDto studentRequestDto, CancellationToken cancellationToken)
         {
             try
             {
-                var students = await _studentRepository.GetAllAsync(cancellationToken);
+                var request = studentRequestDto.Adapt<Student>();
+
+                var students = await _studentRepository.GetAsync(request, cancellationToken);
                 var response = students.Adapt<List<StudentInfoDto>>();
 
                 return Result<List<StudentInfoDto>>.Success(response);

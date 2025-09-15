@@ -5,7 +5,7 @@ namespace Application.Services
 {
     public interface IStudentService
     {
-        Task<Result<List<StudentInfoDto>>> GetAllAsync(CancellationToken cancellationToken);
+        Task<Result<List<StudentInfoDto>>> GetAsync(StudentRequestDto studentRequestDto, CancellationToken cancellationToken);
         Task<Result<string>> CreateAsync(StudentCreateDto studentDto, CancellationToken cancellationToken);
     }
 }
