@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces;
 
-namespace Infrastructure.Commons
+namespace Infrastructure.Support.Commons
 {
     public class PasswordHasher(int workFactor = 12) : IPasswordHasher
     {

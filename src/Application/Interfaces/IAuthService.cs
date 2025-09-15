@@ -1,8 +1,7 @@
-﻿
-using Application.Common;
+﻿using Application.Common;
 using Application.DTOs.Login;
 
-namespace Application.Services
+namespace Application.Interfaces
 {
     public interface IAuthService
     {

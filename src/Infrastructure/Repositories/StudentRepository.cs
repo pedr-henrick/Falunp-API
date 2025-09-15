@@ -1,12 +1,13 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Commons;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories
 {
-    public class StudentRepository(InfrastructureDbContext dbContext) : IStudentRepository
+    public class StudentRepository(InfrastructureDbContext dbContext, ILogger<StudentRepository> logger) : IStudentRepository
     {
+        private readonly ILogger<StudentRepository> _logger = logger;
         private readonly InfrastructureDbContext _dbContext = dbContext;
 
         public async Task<List<Student>> GetPagedAsync(Student studentEntity, int page, int pageSize, CancellationToken cancellationToken)
@@ -32,6 +33,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[StudentRepository - GetPagedAsync] - Error retrieving students");
                 throw new Exception($"Error retrieving students: {ex.Message}");
             }
         }
@@ -45,6 +47,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[StudentRepository - GetByIdAsync] - Error retrieving student by ID");
                 throw new Exception($"Error retrieving students: {ex.Message}");
             }
         }
@@ -58,6 +61,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[StudentRepository - CreateAsync] - Error adding students");
                 throw new Exception($"Error adding students: {ex.Message}");
             }
         }
@@ -81,6 +85,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[StudentRepository - UpdateAsync] - Error updating students");
                 throw new Exception($"Error updating students: {ex.Message}");
             }
         }
@@ -97,6 +102,7 @@ namespace Infrastructure.Repositories
             }
             catch (DbUpdateException ex)
             {
+                _logger.LogError(ex, "[StudentRepository - DeleteAsync] - Error deleting student due to related records");
                 throw new Exception($"Error deleting student: {ex.Message}");
             }
         }

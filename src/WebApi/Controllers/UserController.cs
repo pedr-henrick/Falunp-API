@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Login;
-using Application.Services;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers

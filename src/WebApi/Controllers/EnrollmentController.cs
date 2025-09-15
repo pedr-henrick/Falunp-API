@@ -1,6 +1,6 @@
 ﻿using Application.Common;
 using Application.DTOs.Enrollment;
-using Application.Services;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers

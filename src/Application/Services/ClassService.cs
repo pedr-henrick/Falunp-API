@@ -1,14 +1,20 @@
 ﻿using Application.Common;
 using Application.DTOs.Class;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
 using Mapster;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
-    public class ClassService(IClassRepository classRepository, IValidator<ClassDto> classValidator) : IClassService
+    public class ClassService(
+        ILogger<ClassService> logger,
+        IClassRepository classRepository,
+        IValidator<ClassDto> classValidator) : IClassService
     {
+        private readonly ILogger<ClassService> _logger = logger;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IValidator<ClassDto> _classValidator = classValidator;
 
@@ -24,6 +30,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassService - GetAsync] - Error retrieving classes");
                 return Result<List<ClassInfoDto>>.Failure($"Error retrieving classes: {ex.Message}");
             }
         }
@@ -49,6 +56,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassService - CreateAsync] - Error adding class");
                 return Result<string>.Failure($"Error adding class: {ex.Message}");
             }
         }
@@ -74,6 +82,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassService - UpdateAsync] - Error updating class");
                 return Result<string>.Failure($"Error updating class: {ex.Message}");
             }
         }
@@ -87,6 +96,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassService - DeleteAsync] - Error deleting class");
                 return Result<string>.Failure($"Error deleting class: {ex.Message}");
             }
         }

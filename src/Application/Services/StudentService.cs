@@ -1,18 +1,22 @@
 ﻿using Application.Common;
 using Application.DTOs.Student;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
 using Mapster;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
     public class StudentService(
+        ILogger<StudentService> logger,
         IStudentRepository studentRepository,
         IValidator<StudentCreateDto> createValidator,
         IValidator<StudentUpdateDto> updateValidator,
         IPasswordHasher passwordHasher) : IStudentService
     {
+        private readonly ILogger<StudentService> _logger = logger;
         private readonly IStudentRepository _studentRepository = studentRepository;
         private readonly IValidator<StudentCreateDto> _createValidator = createValidator;
         private readonly IValidator<StudentUpdateDto> _updateValidator = updateValidator;
@@ -30,6 +34,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[StudentService - GetAsync] - Error retrieving students");
                 return Result<List<StudentInfoDto>>.Failure($"Error retrieving students: {ex.Message}");
             }
         }
@@ -56,6 +61,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[StudentService - CreateAsync] - Error adding student");
                 return Result<string>.Failure($"Error retrieving students: {ex.Message}");
             }
         }
@@ -69,6 +75,7 @@ namespace Application.Services
                 var errors = validationResult.Errors
                     .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
                     .ToList();
+
                 return Result<string>.ValidationFailure(errors);
             }
 
@@ -94,6 +101,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[StudentService - DeleteAsync] - Error deleting students");
                 return Result<string>.Failure($"Error deleting students: {ex.Message}");
             }
         }

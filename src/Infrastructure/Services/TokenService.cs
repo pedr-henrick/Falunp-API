@@ -22,7 +22,7 @@ namespace Infrastructure.Services
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Name, user.Name),
-                    new Claim(ClaimTypes.Role, "Admin") // Ou roles do usuário
+                    new Claim(ClaimTypes.Role, "Admin")
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(_tokenOptions.ExpiryInMinutes),
                 Issuer = _tokenOptions.Issuer,

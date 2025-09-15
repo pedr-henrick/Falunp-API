@@ -1,7 +1,7 @@
 ﻿using Application.Common;
 using Application.DTOs.Enrollment;
 
-namespace Application.Services
+namespace Application.Interfaces
 {
     public interface IEnrollmentService
     {

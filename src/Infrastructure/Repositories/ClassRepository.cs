@@ -1,12 +1,13 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Commons;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories
 {
-    public class ClassRepository(InfrastructureDbContext dbContext) : IClassRepository
+    public class ClassRepository(InfrastructureDbContext dbContext, ILogger<ClassRepository> logger) : IClassRepository
     {
+        private readonly ILogger<ClassRepository> _logger = logger;
         private readonly InfrastructureDbContext _dbContext = dbContext;
 
         public async Task<List<Class>> GetAsync(Class classEntity, CancellationToken cancellationToken)
@@ -27,6 +28,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassRepository - GetAsync] - Error retrieving classes");
                 throw new Exception($"Error retrieving classes:  {ex.Message}");
             }
         }
@@ -40,6 +42,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassRepository - CreateAsync] - Error adding classes");
                 throw new Exception($"Error adding classes: {ex.Message}");
             }
         }
@@ -63,6 +66,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassRepository - UpdateAsync] - Error updating classes");
                 throw new Exception($"Error updating classes: {ex.Message}");
             }
         }
@@ -78,6 +82,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[ClassRepository - DeleteAsync] - Error deleting class");
                 throw new Exception($"Error deleting class: {ex.Message}");
             }
         }

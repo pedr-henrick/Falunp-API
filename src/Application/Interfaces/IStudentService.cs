@@ -1,7 +1,7 @@
 ﻿using Application.Common;
 using Application.DTOs.Student;
 
-namespace Application.Services
+namespace Application.Interfaces
 {
     public interface IStudentService
     {

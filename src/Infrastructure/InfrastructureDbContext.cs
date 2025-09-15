@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Commons
+namespace Infrastructure
 {
     public class InfrastructureDbContext(DbContextOptions<InfrastructureDbContext> options) : DbContext(options)
     {
