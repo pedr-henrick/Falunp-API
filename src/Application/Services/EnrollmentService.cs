@@ -1,14 +1,21 @@
 ﻿using Application.Common;
 using Application.DTOs.Enrollment;
+using Application.DTOs.Student;
 using Domain.Entities;
 using Domain.Interfaces;
+using FluentValidation;
 using Mapster;
 
 namespace Application.Services
 {
-    public class EnrollmentService(IEnrollmentRepository enrollmentRepository) : IEnrollmentService
+    public class EnrollmentService(
+        IEnrollmentRepository enrollmentRepository,
+        IValidator<EnrollmentCreateDto> createValidator,
+        IValidator<EnrollmentUpdateDto> updateValidator) : IEnrollmentService
     {
         private readonly IEnrollmentRepository _enrollmentRepository = enrollmentRepository;
+        private readonly IValidator<EnrollmentCreateDto> _createValidator = createValidator;
+        private readonly IValidator<EnrollmentUpdateDto> _updateValidator = updateValidator;
 
         public async Task<Result<List<EnrollmentInfoDto>>> GetAsync(EnrollmentInfoDto enrollmentRequestDto, CancellationToken cancellationToken)
         {
@@ -29,8 +36,43 @@ namespace Application.Services
         {
             try
             {
+                var validationResult = await _createValidator.ValidateAsync(enrollmentCreatetDto, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors
+                        .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
+                        .ToList();
+                    return Result<string>.ValidationFailure(errors);
+                }
+
                 var enrollmentEntity = enrollmentCreatetDto.Adapt<Enrollment>();
                 await _enrollmentRepository.CreateAsync(enrollmentEntity, cancellationToken);
+
+                return Result<string>.Success("Enrollment added successfully");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure($"Error retrieving enrollment: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<string>> UpdateAsync(EnrollmentUpdateDto enrollmentUpdateDto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var validationResult = await _updateValidator.ValidateAsync(enrollmentUpdateDto, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors
+                        .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
+                        .ToList();
+                    return Result<string>.ValidationFailure(errors);
+                }
+
+                var enrollmentEntity = enrollmentUpdateDto.Adapt<Enrollment>();
+                await _enrollmentRepository.UpdateAsync(enrollmentEntity, cancellationToken);
 
                 return Result<string>.Success("Enrollment added successfully");
             }
