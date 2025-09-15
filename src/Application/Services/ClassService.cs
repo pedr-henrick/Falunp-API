@@ -7,10 +7,10 @@ using Mapster;
 
 namespace Application.Services
 {
-    public class ClassService(IClassRepository classRepository, IValidator<ClassCreateDto> classInfoValidator) : IClassService
+    public class ClassService(IClassRepository classRepository, IValidator<ClassDto> classValidator) : IClassService
     {
         private readonly IClassRepository _classRepository = classRepository;
-        private readonly IValidator<ClassCreateDto> _classInfoValidator = classInfoValidator;
+        private readonly IValidator<ClassDto> _classValidator = classValidator;
 
         public async Task<Result<List<ClassInfoDto>>> GetAllAsync(CancellationToken cancellationToken)
         {
@@ -27,11 +27,11 @@ namespace Application.Services
             }
         }
 
-        public async Task<Result<string>> CreateAsync(ClassCreateDto classCreateDto, CancellationToken cancellationToken)
+        public async Task<Result<string>> CreateAsync(ClassDto ClassDto, CancellationToken cancellationToken)
         {
             try
             {
-                var validationResult = await _classInfoValidator.ValidateAsync(classCreateDto, cancellationToken);
+                var validationResult = await _classValidator.ValidateAsync(ClassDto, cancellationToken);
 
                 if (!validationResult.IsValid)
                 {
@@ -41,7 +41,7 @@ namespace Application.Services
                     return Result<string>.ValidationFailure(errors);
                 }
 
-                var classEntity = classCreateDto.Adapt<Class>();
+                var classEntity = ClassDto.Adapt<Class>();
                 await _classRepository.CreateAsync(classEntity, cancellationToken);
                 
                 return Result<string>.Success("Class added successfully");
@@ -49,6 +49,31 @@ namespace Application.Services
             catch (Exception ex)
             {
                 return Result<string>.Failure($"Error adding class: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<string>> UpdateAsync(Guid id, ClassDto ClassDto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var validationResult = await _classValidator.ValidateAsync(ClassDto, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors
+                        .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
+                        .ToList();
+                    return Result<string>.ValidationFailure(errors);
+                }
+
+                var classEntity = ClassDto.Adapt<Class>();
+                await _classRepository.UpdateAsync(id, classEntity, cancellationToken);
+
+                return Result<string>.Success("Class Update successfully");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure($"Error updating class: {ex.Message}");
             }
         }
     }

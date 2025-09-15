@@ -47,12 +47,12 @@ namespace WebApi.Controllers
         [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateClassAsync([FromBody] ClassCreateDto classInfoDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateClassAsync([FromBody] ClassDto classDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
 
-            var result = await _classService.CreateAsync(classInfoDto, cancellationToken);
+            var result = await _classService.CreateAsync(classDto, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
@@ -68,6 +68,36 @@ namespace WebApi.Controllers
             return Unauthorized(new ProblemDetails
             {
                 Title = "Add class failed",
+                Detail = result.Error,
+                Status = StatusCodes.Status401Unauthorized
+            });
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateClassAsync([FromQuery] Guid id, [FromBody] ClassDto classDto, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+
+            var result = await _classService.UpdateAsync(id, classDto, cancellationToken);
+
+            if (result.IsSuccess)
+                return Ok(result.Value);
+
+            if (result.ValidationErrors.Count != 0)
+            {
+                foreach (var error in result.ValidationErrors)
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+
+                return ValidationProblem(ModelState);
+            }
+
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Update class failed",
                 Detail = result.Error,
                 Status = StatusCodes.Status401Unauthorized
             });
