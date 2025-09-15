@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.DTOs.Class;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -12,6 +13,7 @@ namespace WebApi.Controllers
         private readonly IClassService _classService = classService;
 
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(Result<List<ClassInfoDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
