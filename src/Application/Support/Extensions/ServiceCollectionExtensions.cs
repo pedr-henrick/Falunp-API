@@ -1,13 +1,14 @@
 ﻿using Application.DTOs.Class;
 using Application.DTOs.Enrollment;
 using Application.DTOs.Student;
+using Application.Interfaces;
 using Application.Mappings;
 using Application.Services;
 using Application.Validators;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Application.Support
+namespace Application.Support.Extensions
 {
     public static class ServiceCollectionExtensions
     {

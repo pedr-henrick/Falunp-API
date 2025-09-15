@@ -1,11 +1,18 @@
 ﻿using Application.Common;
 using Application.DTOs.Login;
+using Application.Interfaces;
 using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
-    public class AuthService(IUserRepository userRepository, IPasswordHasher passwordHasher, ITokenService tokenService) : IAuthService
+    public class AuthService(
+        IUserRepository userRepository,
+        IPasswordHasher passwordHasher,
+        ITokenService tokenService,
+        ILogger<AuthService> logger) : IAuthService
     {
+        private readonly ILogger<AuthService> _logger = logger;
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IPasswordHasher _passwordHasher = passwordHasher;
         private readonly ITokenService _tokenService = tokenService;
@@ -38,6 +45,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[AuthService - AuthenticateAsync] - Error during authentication");
                 return Result<LoginResponseDto>.Failure($"Error during authentication: {ex.Message}");
             }
         }

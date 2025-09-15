@@ -1,7 +1,7 @@
 ﻿using Application.Common;
 using Application.DTOs.Class;
 
-namespace Application.Services
+namespace Application.Interfaces
 {
     public interface IClassService
     {

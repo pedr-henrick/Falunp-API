@@ -1,12 +1,13 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Commons;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories
 {
-    public class EnrollmentRepository(InfrastructureDbContext dbContext) : IEnrollmentRepository
+    public class EnrollmentRepository(InfrastructureDbContext dbContext, ILogger<EnrollmentRepository> logger) : IEnrollmentRepository
     {
+        private readonly ILogger<EnrollmentRepository> _logger = logger;
         private readonly InfrastructureDbContext _dbContext = dbContext;
 
         public async Task<List<Enrollment>> GetAsync(CancellationToken cancellationToken)
@@ -20,6 +21,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[EnrollmentRepository - GetAsync] - Error retrieving enrollments");
                 throw new Exception($"Error retrieving enrollments: {ex.Message}");
             }
         }
@@ -36,6 +38,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[EnrollmentRepository - CreateAsync] - Error adding enrollment");
                 throw new Exception($"Error adding enrollment: {ex.Message}");
             }
         }
@@ -53,6 +56,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[EnrollmentRepository - UpdateAsync] - Error updating enrollment");
                 throw new Exception($"Error updating enrollment: {ex.Message}");
             }
         }
@@ -80,6 +84,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "[EnrollmentRepository - UpdateAsync] - Error deleting enrollment");
                 throw new Exception($"Error deleting enrollment: {ex.Message}");
             }
         }
