@@ -14,6 +14,12 @@ namespace Infrastructure.Repositories
             return await _dbContext.Classes.ToListAsync(cancellationToken);
         }
 
+        public async Task CreateAsync(Class classEntity, CancellationToken cancellationToken)
+        {
+            await _dbContext.Classes.AddAsync(classEntity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
         public async Task<List<Class>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken)
         {
             return await _dbContext.Classes

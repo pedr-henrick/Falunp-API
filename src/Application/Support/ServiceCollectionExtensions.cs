@@ -15,7 +15,7 @@ namespace Application.Support
             services.AddScoped<IClassService, ClassService>();
 
             // Validators
-            services.AddScoped<IValidator<ClassInfoDto>, ClassCreateDtoValidator>();
+            services.AddScoped<IValidator<ClassCreateDto>, ClassCreateDtoValidator>();
 
             return services;
         }
