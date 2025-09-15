@@ -78,9 +78,12 @@ namespace Infrastructure.Repositories
                 if (enrollmentEntity.ClassId.HasValue)
                     query = query.Where(e => e.ClassId == enrollmentEntity.ClassId.Value);
 
-                var deletedRows = await query.ExecuteDeleteAsync(cancellationToken);
-                if (deletedRows == 0)
+                var toDelete = await query.ToListAsync(cancellationToken);
+                if (toDelete.Count == 0)
                     throw new Exception("No registrations found for the given filters.");
+
+                _dbContext.Enrollments.RemoveRange(toDelete);
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
             catch (Exception ex)
             {
