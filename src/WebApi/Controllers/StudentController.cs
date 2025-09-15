@@ -20,7 +20,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAllStudentesAsync([FromQuery] StudentFilterDto studentRequestDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _studentService.GetAsync(studentRequestDto, cancellationToken);
 
@@ -32,7 +32,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -59,12 +59,12 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
             {
-                Title = "Get student failed",
+                Title = "Create student failed",
                 Detail = result.Error,
                 Status = StatusCodes.Status401Unauthorized
             });
@@ -86,7 +86,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -113,12 +113,12 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
             {
-                Title = "Update student failed",
+                Title = "Delete student failed",
                 Detail = result.Error,
                 Status = StatusCodes.Status401Unauthorized
             });

@@ -20,7 +20,7 @@ namespace Application.Services
         private readonly IValidator<EnrollmentCreateDto> _createValidator = createValidator;
         private readonly IValidator<EnrollmentUpdateDto> _updateValidator = updateValidator;
 
-        public async Task<Result<List<EnrollmentInfoDto>>> GetAsync(EnrollmentInfoDto enrollmentRequestDto, CancellationToken cancellationToken)
+        public async Task<Result<List<EnrollmentInfoDto>>> GetAsync(CancellationToken cancellationToken)
         {
             try
             {

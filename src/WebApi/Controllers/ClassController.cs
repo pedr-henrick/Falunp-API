@@ -20,7 +20,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAllClassesAsync([FromQuery] ClassFilterDto classFilterDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _classService.GetAsync(classFilterDto, cancellationToken);
 
@@ -32,7 +32,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -50,7 +50,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateClassAsync([FromBody] ClassDto classDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _classService.CreateAsync(classDto, cancellationToken);
 
@@ -62,7 +62,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -80,7 +80,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateClassAsync(Guid id, [FromBody] ClassDto classDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _classService.UpdateAsync(id, classDto, cancellationToken);
 
@@ -92,7 +92,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -110,7 +110,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> DeleteClassAsync(Guid id, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _classService.DeleteAsync(id, cancellationToken);
 
@@ -122,7 +122,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails

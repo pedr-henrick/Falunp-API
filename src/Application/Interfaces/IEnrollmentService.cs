@@ -5,7 +5,7 @@ namespace Application.Interfaces
 {
     public interface IEnrollmentService
     {
-        Task<Result<List<EnrollmentInfoDto>>> GetAsync(EnrollmentInfoDto enrollmentRequestDto, CancellationToken cancellationToken);
+        Task<Result<List<EnrollmentInfoDto>>> GetAsync(CancellationToken cancellationToken);
         Task<Result<string>> CreateAsync(EnrollmentCreateDto enrollmentCreatetDto, CancellationToken cancellationToken);
         Task<Result<string>> UpdateAsync(EnrollmentUpdateDto enrollmentUpdateDto, CancellationToken cancellationToken);
         Task<Result<string>> DeleteAsync(EnrollmentFilterDto enrollmentFilterDto, CancellationToken cancellationToken);
