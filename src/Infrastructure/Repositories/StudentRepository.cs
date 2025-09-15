@@ -58,6 +58,21 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var classDb = await _dbContext.Students.FirstAsync(x => x.Id == id, cancellationToken) ?? throw new Exception("Student Not Found");
+            _dbContext.Students.Remove(classDb);
+            
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Error deleting student: " + ex.InnerException?.Message);
+            }
+        }
+
         public async Task<bool> EmailExistsAsync(string email)
         {
             return await _dbContext.Students.AnyAsync(s => s.Email == email);

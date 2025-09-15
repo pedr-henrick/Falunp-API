@@ -49,10 +49,9 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var classDb = await _dbContext.Classes.FindAsync(id, cancellationToken)
-                ?? throw new Exception("Class Not Found");
-
+            var classDb = await _dbContext.Classes.FirstAsync(x => x.Id == id, cancellationToken) ?? throw new Exception("Class Not Found");
             _dbContext.Classes.Remove(classDb);
+            
             try
             {
                 await _dbContext.SaveChangesAsync(cancellationToken);
