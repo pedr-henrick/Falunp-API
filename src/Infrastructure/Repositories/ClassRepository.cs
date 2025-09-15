@@ -13,14 +13,17 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                var query = _dbContext.Classes.AsQueryable();
+                var query = _dbContext.Classes.AsNoTracking().AsQueryable();
 
-                if (classEntity.Id != null)
+                if (classEntity.Id.HasValue && classEntity.Id != Guid.Empty)
                     query = query.Where(s => s.Id == classEntity.Id);
                 if (!string.IsNullOrEmpty(classEntity.Name))
                     query = query.Where(s => s.Name.Contains(classEntity.Name));
 
-                return await query.ToListAsync(cancellationToken);
+                return await query 
+                    .Include(c => c.Enrollments)
+                    .OrderBy(c => c.Name)
+                    .ToListAsync(cancellationToken);
             }
             catch (Exception ex)
             {
