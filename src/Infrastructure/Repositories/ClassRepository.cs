@@ -27,8 +27,7 @@ namespace Infrastructure.Repositories
                 throw new Exception("The class name is already in use.");
             }
 
-            var classDb = await _dbContext.Classes.FindAsync(id, cancellationToken)
-                ?? throw new Exception("Class Not Found");
+            var classDb = await _dbContext.Classes.FirstAsync(x => x.Id == id, cancellationToken) ?? throw new Exception("Class Not Found");
 
             classDb.Name = classEntity.Name;
             classDb.Description = classEntity.Description;
