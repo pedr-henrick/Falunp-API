@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Class;
+using Application.DTOs.Student;
 using Application.Services;
 using Application.Validators;
 using FluentValidation;
@@ -17,6 +18,7 @@ namespace Application.Support
 
             // Validators
             services.AddScoped<IValidator<ClassDto>, ClassDtoValidator>();
+            services.AddScoped<IValidator<StudentCreateDto>, StudentCreateDtoValidator>();
 
             return services;
         }
