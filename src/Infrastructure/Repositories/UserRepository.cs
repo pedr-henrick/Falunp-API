@@ -9,7 +9,7 @@ namespace Infrastructure.Repositories
     {
         private readonly InfrastructureDbContext _dbContext = dbContext;
 
-        public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+        public async Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
         }

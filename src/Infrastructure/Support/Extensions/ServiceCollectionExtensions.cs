@@ -19,12 +19,15 @@ namespace Infrastructure.Support.Extensions
             // Repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClassRepository, ClassRepository>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
 
             // Services
             services.AddScoped<ITokenService, TokenService>();
 
             // Commons
             services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+            // Database
             services.AddDbContext<InfrastructureDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), 
                 sqlServerOptions =>
@@ -33,6 +36,7 @@ namespace Infrastructure.Support.Extensions
                     sqlServerOptions.CommandTimeout(60);
                 }));
 
+            // Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -51,6 +55,7 @@ namespace Infrastructure.Support.Extensions
                 };
             });
 
+            // Options
             services.Configure<TokenOptions>(configuration.GetSection("JwtSettings"));
 
             return services;

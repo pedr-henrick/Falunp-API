@@ -7,6 +7,7 @@ namespace Infrastructure.Commons
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<Student> Students { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,19 @@ namespace Infrastructure.Commons
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
 
                 entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            modelBuilder.Entity<Student>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.CPF).IsRequired().HasMaxLength(11);
+                entity.Property(e => e.Password).IsRequired().HasMaxLength(256);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
+
+                entity.HasIndex(e => new { e.Email, e.Name }).IsUnique();
             });
         }
     }
