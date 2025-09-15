@@ -3,14 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Commons
 {
-    public class InfrastructureDbContext : DbContext
+    public class InfrastructureDbContext(DbContextOptions<InfrastructureDbContext> options) : DbContext(options)
     {
-        public InfrastructureDbContext(DbContextOptions<InfrastructureDbContext> options)
-            : base(options)
-        {
-        }
-
         public DbSet<User> Users { get; set; }
+        public DbSet<Class> Classes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,7 +17,16 @@ namespace Infrastructure.Commons
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
+            });
+
+            modelBuilder.Entity<Class>(entity =>
+            {
+                entity.HasKey(e => new { e.Name, e.Id });
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
             });
         }
     }

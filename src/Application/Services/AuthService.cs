@@ -1,5 +1,5 @@
 ﻿using Application.Common;
-using Application.DTOs;
+using Application.DTOs.Login;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -10,11 +10,11 @@ namespace Application.Services
         private readonly IPasswordHasher _passwordHasher = passwordHasher;
         private readonly ITokenService _tokenService = tokenService;
 
-        public async Task<Result<LoginResponseDto>> AuthenticateAsync(LoginRequestDto request)
+        public async Task<Result<LoginResponseDto>> AuthenticateAsync(LoginRequestDto request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await _userRepository.GetByEmailAsync(request.Email);
+                var user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
 
                 if (user == null)
                     return Result<LoginResponseDto>.Failure("User not found");

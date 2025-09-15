@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Login;
+﻿using Application.Common;
+using Application.DTOs.Class;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,21 +7,20 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(IAuthService authService) : ControllerBase
+    public class ClassController(IClassService classService) : ControllerBase
     {
-        private readonly IAuthService _authService = authService;
+        private readonly IClassService _classService = classService;
 
-        [HttpPost("login")]
-        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [HttpGet]
+        [ProducesResponseType(typeof(Result<List<ClassInfoDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllClassesAsync(CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
 
-            var result = await _authService.AuthenticateAsync(request, cancellationToken);
+            var result = await _classService.GetAllAsync(cancellationToken);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
@@ -29,13 +29,13 @@ namespace WebApi.Controllers
             {
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                
+
                 return ValidationProblem(ModelState);
             }
 
             return Unauthorized(new ProblemDetails
             {
-                Title = "Authentication failed",
+                Title = "Get class failed",
                 Detail = result.Error,
                 Status = StatusCodes.Status401Unauthorized
             });
