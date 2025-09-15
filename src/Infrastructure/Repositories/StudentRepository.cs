@@ -13,5 +13,21 @@ namespace Infrastructure.Repositories
         {
             return await _dbContext.Students.ToListAsync(cancellationToken);
         }
+
+        public async Task CreateAsync(Student studentEntity, CancellationToken cancellationToken)
+        {
+            await _dbContext.Students.AddAsync(studentEntity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            return await _dbContext.Students.AnyAsync(s => s.Email == email);
+        }
+
+        public async Task<bool> CpfExistsAsync(string cpf)
+        {
+            return await _dbContext.Students.AnyAsync(s => s.CPF == cpf);
+        }
     }
 }

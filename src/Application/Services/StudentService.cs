@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.DTOs.Student;
+using Domain.Entities;
 using Domain.Interfaces;
 using Mapster;
 
@@ -21,6 +22,21 @@ namespace Application.Services
             catch (Exception ex)
             {
                 return Result<List<StudentInfoDto>>.Failure($"Error retrieving students: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<string>> CreateAsync(StudentCreateDto studentDto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var studentEntity = studentDto.Adapt<Student>();
+                await _studentRepository.CreateAsync(studentEntity, cancellationToken);
+
+                return Result<string>.Success("Student added successfully");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure($"Error retrieving students: {ex.Message}");
             }
         }
     }
