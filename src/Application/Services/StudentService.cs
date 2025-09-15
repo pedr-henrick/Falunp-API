@@ -23,7 +23,7 @@ namespace Application.Services
             try
             {
                 var request = studentRequestDto.Adapt<Student>();
-                var students = await _studentRepository.GetAsync(request, cancellationToken);
+                var students = await _studentRepository.GetPagedAsync(request, studentRequestDto.PageNumber, studentRequestDto.PageSize, cancellationToken);
 
                 var response = students.Adapt<List<StudentInfoDto>>();
                 return Result<List<StudentInfoDto>>.Success(response);

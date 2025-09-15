@@ -9,22 +9,39 @@ namespace Infrastructure.Repositories
     {
         private readonly InfrastructureDbContext _dbContext = dbContext;
 
-        public async Task<List<Student>> GetAsync(Student student, CancellationToken cancellationToken)
+        public async Task<List<Student>> GetPagedAsync(Student studentEntity, int page, int pageSize, CancellationToken cancellationToken)
         {
             try
             {
-                var query = _dbContext.Students.AsQueryable();
+                var query = _dbContext.Students.AsNoTracking().AsQueryable();
 
-                if (student.Id != null)
-                    query = query.Where(s => s.Id == student.Id);
-                if (!string.IsNullOrEmpty(student.Name))
-                    query = query.Where(s => s.Name.Contains(student.Name));
-                if (!string.IsNullOrEmpty(student.Email))
-                    query = query.Where(s => s.Email == student.Email);
-                if (!string.IsNullOrEmpty(student.CPF))
-                    query = query.Where(s => s.CPF == student.CPF);
+                if (studentEntity.Id.HasValue && studentEntity.Id != Guid.Empty)
+                    query = query.Where(s => s.Id == studentEntity.Id);
+                if (!string.IsNullOrEmpty(studentEntity.Name))
+                    query = query.Where(s => s.Name.Contains(studentEntity.Name));
+                if (!string.IsNullOrEmpty(studentEntity.Email))
+                    query = query.Where(s => s.Email == studentEntity.Email);
+                if (!string.IsNullOrEmpty(studentEntity.CPF))
+                    query = query.Where(s => s.CPF == studentEntity.CPF);
 
-                return await query.ToListAsync(cancellationToken);
+                return await query
+                    .OrderBy(s => s.Name)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving students: {ex.Message}");
+            }
+        }
+
+        public async Task<Student> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await _dbContext.Students.FirstOrDefaultAsync(s => s.Id == id, cancellationToken)
+                    ?? throw new Exception("Student Not Found");
             }
             catch (Exception ex)
             {
@@ -70,11 +87,12 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var classDb = await _dbContext.Students.FirstAsync(x => x.Id == id, cancellationToken) ?? throw new Exception("Student Not Found");
-            _dbContext.Students.Remove(classDb);
 
             try
             {
+                var classDb = await GetByIdAsync(id, cancellationToken);
+                _dbContext.Students.Remove(classDb);
+                
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
             catch (DbUpdateException ex)
