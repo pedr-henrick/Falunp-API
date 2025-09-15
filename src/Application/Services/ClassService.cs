@@ -86,7 +86,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                return Result<string>.Failure($"Error updating class: {ex.Message}");
+                return Result<string>.Failure($"Error deleting class: {ex.Message}");
             }
         }
     }

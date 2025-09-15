@@ -85,5 +85,18 @@ namespace Application.Services
                 return Result<string>.Failure($"Error updating students: {ex.Message}");
             }
         }
+
+        public async Task<Result<string>> DaleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _studentRepository.DeleteAsync(id, cancellationToken);
+                return Result<string>.Success("Student successfully deleted");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure($"Error deleting students: {ex.Message}");
+            }
+        }
     }
 }
