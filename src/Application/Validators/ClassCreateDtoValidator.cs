@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.Validators
 {
-    public class ClassCreateDtoValidator : AbstractValidator<ClassCreateDto>
+    public class ClassDtoValidator : AbstractValidator<ClassDto>
     {
-        public ClassCreateDtoValidator()
+        public ClassDtoValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Nome é obrigatório")

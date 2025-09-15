@@ -20,6 +20,34 @@ namespace Infrastructure.Repositories
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task UpdateAsync(Guid id, Class classEntity, CancellationToken cancellationToken)
+        {
+            if (await _dbContext.Classes.AnyAsync(c => c.Name == classEntity.Name && c.Id != id, cancellationToken))
+            {
+                throw new Exception("O nome da classe já está em uso.");
+            }
+
+            var classDb = await _dbContext.Classes.FindAsync(id, cancellationToken)
+                ?? throw new Exception("Class Not Found");
+
+            classDb.Name = classEntity.Name;
+            classDb.Description = classEntity.Description;
+            classDb.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("unique constraint") == true)
+                {
+                    throw new Exception("O nome da classe já está em uso.");
+                }
+                throw;
+            }
+        }
+
         public async Task<List<Class>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken)
         {
             return await _dbContext.Classes
