@@ -14,6 +14,7 @@ namespace Infrastructure.Commons
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnType("uniqueidentifier").HasDefaultValueSql("NEWID()");
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Password).IsRequired().HasMaxLength(256);
@@ -26,6 +27,7 @@ namespace Infrastructure.Commons
             modelBuilder.Entity<Class>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnType("uniqueidentifier").HasDefaultValueSql("NEWID()");
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
@@ -37,6 +39,7 @@ namespace Infrastructure.Commons
             modelBuilder.Entity<Student>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnType("uniqueidentifier").HasDefaultValueSql("NEWID()");
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.CPF).IsRequired().HasMaxLength(11);
