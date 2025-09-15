@@ -15,9 +15,11 @@ namespace Infrastructure.Commons
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Password).IsRequired().HasMaxLength(256);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
+
+                entity.HasIndex(e => new { e.Email, e.Name }).IsUnique();
             });
 
             modelBuilder.Entity<Class>(entity =>
@@ -27,6 +29,8 @@ namespace Infrastructure.Commons
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
+
+                entity.HasIndex(e => e.Name).IsUnique();
             });
         }
     }

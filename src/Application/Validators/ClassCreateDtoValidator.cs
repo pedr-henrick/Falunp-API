@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Validators
 {
-    public class ClassCreateDtoValidator : AbstractValidator<ClassInfoDto>
+    public class ClassCreateDtoValidator : AbstractValidator<ClassCreateDto>
     {
         public ClassCreateDtoValidator()
         {

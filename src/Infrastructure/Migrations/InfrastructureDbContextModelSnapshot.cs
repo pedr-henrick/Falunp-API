@@ -47,6 +47,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Name", "Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Classes");
                 });
 
@@ -73,8 +76,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -82,6 +85,9 @@ namespace Infrastructure.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email", "Name")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
