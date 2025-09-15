@@ -2,7 +2,6 @@
 using Domain.Interfaces;
 using Infrastructure.Commons;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Repositories
 {
@@ -23,13 +22,40 @@ namespace Infrastructure.Repositories
             if (!string.IsNullOrEmpty(student.CPF))
                 query = query.Where(s => s.CPF == student.CPF);
 
-           return await query.ToListAsync(cancellationToken);
+            return await query.ToListAsync(cancellationToken);
         }
 
         public async Task CreateAsync(Student studentEntity, CancellationToken cancellationToken)
         {
             await _dbContext.Students.AddAsync(studentEntity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task UpdateAsync(Guid id, Student studentEntity, CancellationToken cancellationToken)
+        {
+            if (await _dbContext.Students.AnyAsync(c => (c.Email == studentEntity.Email || c.CPF == studentEntity.CPF) && c.Id != id, cancellationToken))
+                throw new Exception("There is already a student with the email or CPF you are trying to update.");
+
+            var studentDb = await _dbContext.Students.FirstAsync(x => x.Id == id, cancellationToken) ?? throw new Exception("Student Not Found");
+
+            studentDb.Name = studentEntity.Name;
+            studentDb.BirthDate = studentEntity.BirthDate;
+            studentDb.CPF = studentEntity.CPF;
+            studentDb.Email = studentEntity.Email;
+            studentDb.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("unique constraint") == true)
+                {
+                    throw new Exception("The class name is already in use.");
+                }
+                throw;
+            }
         }
 
         public async Task<bool> EmailExistsAsync(string email)

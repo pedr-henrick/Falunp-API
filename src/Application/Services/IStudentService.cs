@@ -7,5 +7,6 @@ namespace Application.Services
     {
         Task<Result<List<StudentInfoDto>>> GetAsync(StudentRequestDto studentRequestDto, CancellationToken cancellationToken);
         Task<Result<string>> CreateAsync(StudentCreateDto studentDto, CancellationToken cancellationToken);
+        Task<Result<string>> Updatesync(Guid id, StudentUpdateDto studentUpdateDto, CancellationToken cancellationToken);
     }
 }
