@@ -15,12 +15,12 @@ namespace WebApi.Controllers
         [ProducesResponseType(typeof(Result<List<EnrollmentInfoDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllEnrollmentAsync([FromQuery] EnrollmentInfoDto enrollmentRequestDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllEnrollmentAsync(CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
-            var result = await _enrollmentService.GetAsync(enrollmentRequestDto, cancellationToken);
+            var result = await _enrollmentService.GetAsync(cancellationToken);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
@@ -30,7 +30,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -48,7 +48,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateEnrollmentAsync([FromBody] EnrollmentCreateDto enrollmentRequestDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _enrollmentService.CreateAsync(enrollmentRequestDto, cancellationToken);
 
@@ -60,7 +60,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -79,7 +79,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateEnrollmentAsync([FromBody] EnrollmentUpdateDto enrollmentUpdateDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _enrollmentService.UpdateAsync(enrollmentUpdateDto, cancellationToken);
 
@@ -91,7 +91,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
@@ -109,7 +109,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> DeleteEnrollmentByClassAsync([FromQuery] EnrollmentFilterDto enrollmentFilterDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
 
             var result = await _enrollmentService.DeleteAsync(enrollmentFilterDto, cancellationToken);
 
@@ -121,7 +121,7 @@ namespace WebApi.Controllers
                 foreach (var error in result.ValidationErrors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem(modelStateDictionary: ModelState, statusCode: StatusCodes.Status400BadRequest);
             }
 
             return Unauthorized(new ProblemDetails
