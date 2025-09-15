@@ -11,6 +11,7 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+        public ICollection<Enrollment> Enrollments { get; set; } = [];
         public void SetPasswordHash(string passwordHash)
         {
             Password = passwordHash ?? throw new ArgumentNullException(nameof(passwordHash));
