@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Infrastructure.Commons;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Repositories
 {
@@ -9,9 +10,20 @@ namespace Infrastructure.Repositories
     {
         private readonly InfrastructureDbContext _dbContext = dbContext;
 
-        public async Task<List<Student>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<List<Student>> GetAsync(Student student, CancellationToken cancellationToken)
         {
-            return await _dbContext.Students.ToListAsync(cancellationToken);
+            var query = _dbContext.Students.AsQueryable();
+
+            if (student.Id != null)
+                query = query.Where(s => s.Id == student.Id);
+            if (!string.IsNullOrEmpty(student.Name))
+                query = query.Where(s => s.Name.Contains(student.Name));
+            if (!string.IsNullOrEmpty(student.Email))
+                query = query.Where(s => s.Email == student.Email);
+            if (!string.IsNullOrEmpty(student.CPF))
+                query = query.Where(s => s.CPF == student.CPF);
+
+           return await query.ToListAsync(cancellationToken);
         }
 
         public async Task CreateAsync(Student studentEntity, CancellationToken cancellationToken)

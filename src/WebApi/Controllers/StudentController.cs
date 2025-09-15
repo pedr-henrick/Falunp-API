@@ -17,12 +17,12 @@ namespace WebApi.Controllers
         [ProducesResponseType(typeof(Result<List<StudentInfoDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllStudentesAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllStudentesAsync([FromQuery] StudentRequestDto studentRequestDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
 
-            var result = await _studentService.GetAllAsync(cancellationToken);
+            var result = await _studentService.GetAsync(studentRequestDto, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
