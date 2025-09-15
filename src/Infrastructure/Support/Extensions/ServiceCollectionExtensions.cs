@@ -15,6 +15,7 @@ namespace Infrastructure.Support.Extensions
         {
             // Repositories
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IClassRepository, ClassRepository>();
 
             // Services
             services.AddScoped<ITokenService, TokenService>();
@@ -22,7 +23,12 @@ namespace Infrastructure.Support.Extensions
             // Commons
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddDbContext<InfrastructureDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), 
+                sqlServerOptions =>
+                {
+                    sqlServerOptions.EnableRetryOnFailure();
+                    sqlServerOptions.CommandTimeout(60);
+                }));
 
             services.Configure<TokenOptions>(configuration.GetSection("JwtSettings"));
 

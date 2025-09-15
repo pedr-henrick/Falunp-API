@@ -4,6 +4,6 @@ namespace Domain.Interfaces
 {
     public interface IUserRepository
     {
-        Task<User?> GetByEmailAsync(string email);
+        Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken);
     }
 }

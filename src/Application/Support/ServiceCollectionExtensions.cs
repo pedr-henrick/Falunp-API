@@ -1,4 +1,7 @@
-﻿using Application.Services;
+﻿using Application.DTOs.Class;
+using Application.Services;
+using Application.Validators;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Support
@@ -9,6 +12,10 @@ namespace Application.Support
         {
             // Services
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IClassService, ClassService>();
+
+            // Validators
+            services.AddScoped<IValidator<ClassInfoDto>, ClassCreateDtoValidator>();
 
             return services;
         }
