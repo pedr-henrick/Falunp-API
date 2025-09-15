@@ -2,13 +2,19 @@
 using Application.DTOs.Student;
 using Domain.Entities;
 using Domain.Interfaces;
+using FluentValidation;
 using Mapster;
 
 namespace Application.Services
 {
-    public class StudentService(IStudentRepository studentRepository) : IStudentService
+    public class StudentService(
+        IStudentRepository studentRepository,
+        IValidator<StudentCreateDto> createValidator,
+        IPasswordHasher passwordHasher) : IStudentService
     {
         private readonly IStudentRepository _studentRepository = studentRepository;
+        private readonly IValidator<StudentCreateDto> _createValidator = createValidator;
+        private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
         public async Task<Result<List<StudentInfoDto>>> GetAsync(StudentRequestDto studentRequestDto, CancellationToken cancellationToken)
         {
@@ -27,13 +33,24 @@ namespace Application.Services
             }
         }
 
-        public async Task<Result<string>> CreateAsync(StudentCreateDto studentDto, CancellationToken cancellationToken)
+        public async Task<Result<string>> CreateAsync(StudentCreateDto studentCreateDto, CancellationToken cancellationToken)
         {
+            var validationResult = await _createValidator.ValidateAsync(studentCreateDto);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors
+                    .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
+                    .ToList();
+                return Result<string>.ValidationFailure(errors);
+            }
+
             try
             {
-                var studentEntity = studentDto.Adapt<Student>();
-                await _studentRepository.CreateAsync(studentEntity, cancellationToken);
+                var studentEntity = studentCreateDto.Adapt<Student>();
+                studentEntity.SetPasswordHash(_passwordHasher.HashPassword(studentCreateDto.Password));
 
+                await _studentRepository.CreateAsync(studentEntity, cancellationToken);
                 return Result<string>.Success("Student added successfully");
             }
             catch (Exception ex)
