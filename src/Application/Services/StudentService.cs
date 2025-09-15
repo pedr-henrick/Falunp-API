@@ -18,15 +18,14 @@ namespace Application.Services
         private readonly IValidator<StudentUpdateDto> _updateValidator = updateValidator;
         private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
-        public async Task<Result<List<StudentInfoDto>>> GetAsync(StudentRequestDto studentRequestDto, CancellationToken cancellationToken)
+        public async Task<Result<List<StudentInfoDto>>> GetAsync(StudentFilterDto studentRequestDto, CancellationToken cancellationToken)
         {
             try
             {
                 var request = studentRequestDto.Adapt<Student>();
-
                 var students = await _studentRepository.GetAsync(request, cancellationToken);
-                var response = students.Adapt<List<StudentInfoDto>>();
 
+                var response = students.Adapt<List<StudentInfoDto>>();
                 return Result<List<StudentInfoDto>>.Success(response);
             }
             catch (Exception ex)

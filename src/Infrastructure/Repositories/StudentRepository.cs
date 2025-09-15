@@ -11,24 +11,38 @@ namespace Infrastructure.Repositories
 
         public async Task<List<Student>> GetAsync(Student student, CancellationToken cancellationToken)
         {
-            var query = _dbContext.Students.AsQueryable();
+            try
+            {
+                var query = _dbContext.Students.AsQueryable();
 
-            if (student.Id != null)
-                query = query.Where(s => s.Id == student.Id);
-            if (!string.IsNullOrEmpty(student.Name))
-                query = query.Where(s => s.Name.Contains(student.Name));
-            if (!string.IsNullOrEmpty(student.Email))
-                query = query.Where(s => s.Email == student.Email);
-            if (!string.IsNullOrEmpty(student.CPF))
-                query = query.Where(s => s.CPF == student.CPF);
+                if (student.Id != null)
+                    query = query.Where(s => s.Id == student.Id);
+                if (!string.IsNullOrEmpty(student.Name))
+                    query = query.Where(s => s.Name.Contains(student.Name));
+                if (!string.IsNullOrEmpty(student.Email))
+                    query = query.Where(s => s.Email == student.Email);
+                if (!string.IsNullOrEmpty(student.CPF))
+                    query = query.Where(s => s.CPF == student.CPF);
 
-            return await query.ToListAsync(cancellationToken);
+                return await query.ToListAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving students: {ex.Message}");
+            }
         }
 
         public async Task CreateAsync(Student studentEntity, CancellationToken cancellationToken)
         {
-            await _dbContext.Students.AddAsync(studentEntity, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await _dbContext.Students.AddAsync(studentEntity, cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error adding students: {ex.Message}");
+            }
         }
 
         public async Task UpdateAsync(Guid id, Student studentEntity, CancellationToken cancellationToken)
@@ -48,13 +62,9 @@ namespace Infrastructure.Repositories
             {
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                if (ex.InnerException?.Message.Contains("unique constraint") == true)
-                {
-                    throw new Exception("The class name is already in use.");
-                }
-                throw;
+                throw new Exception($"Error updating students: {ex.Message}");
             }
         }
 
@@ -62,14 +72,14 @@ namespace Infrastructure.Repositories
         {
             var classDb = await _dbContext.Students.FirstAsync(x => x.Id == id, cancellationToken) ?? throw new Exception("Student Not Found");
             _dbContext.Students.Remove(classDb);
-            
+
             try
             {
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
             catch (DbUpdateException ex)
             {
-                throw new Exception("Error deleting student: " + ex.InnerException?.Message);
+                throw new Exception($"Error deleting student: {ex.Message}");
             }
         }
 
